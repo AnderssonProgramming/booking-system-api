@@ -33,9 +33,14 @@ The application starts on **http://localhost:8080**.
 
 ## API Endpoints
 
-| Method | Endpoint  | Description                          |
-|--------|-----------|---------------------------------------|
-| GET    | `/health` | Health check — confirms the API is up |
+| Method | Endpoint          | Description                          |
+|--------|-------------------|---------------------------------------|
+| GET    | `/health`         | Health check — confirms the API is up |
+| GET    | `/api/users`      | List all users                        |
+| GET    | `/api/users/{id}` | Get a user by id                      |
+| POST   | `/api/users`      | Create a user                         |
+| PUT    | `/api/users/{id}` | Update a user                         |
+| DELETE | `/api/users/{id}` | Delete a user                         |
 
 Example:
 
@@ -49,14 +54,40 @@ Response:
 <h1>The API is working ok!</h1>
 ```
 
+User CRUD example:
+
+```bash
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Andersson Sanchez","email":"andersson@example.com","phone":"3001234567"}'
+```
+
+Response:
+
+```json
+{"id":1,"name":"Andersson Sanchez","email":"andersson@example.com","phone":"3001234567"}
+```
+
+> **Note:** users are stored in-memory in a `HashMap`, so the data resets every time the application restarts.
+
 ## Project Structure
 
 ```
 src/main/java/com/andersson/bookingsystemapi/
 ├── BookingSystemApiApplication.java   # Spring Boot entry point
-└── controller/
-    └── health/
-        └── HealthController.java      # GET /health
+├── controller/
+│   ├── health/
+│   │   └── HealthController.java      # GET /health
+│   └── user/
+│       └── UserController.java        # /api/users CRUD endpoints
+├── service/
+│   ├── UserService.java               # User service interface
+│   └── impl/
+│       └── UserServiceImpl.java       # HashMap-based implementation (@Service)
+├── model/
+│   └── User.java                      # User model
+└── exception/
+    └── UserNotFoundException.java     # 404 when a user id doesn't exist
 ```
 
 ## Building
